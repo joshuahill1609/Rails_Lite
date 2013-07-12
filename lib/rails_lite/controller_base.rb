@@ -12,9 +12,11 @@ class ControllerBase
     @res = res
     # @route_params = route_params
     @already_rendered = false
+
   end
 
   def session
+    @session ||= Session.new(@req)
   end
 
   #not sure I need this?
@@ -27,6 +29,7 @@ class ControllerBase
     #needs to set the response status and header
     @res.set_redirect(WEBrick::HTTPStatus::TemporaryRedirect, url)
     @already_rendered = true
+    @session.store_session(@req)
   end
 
   def render_content(body, content_type)
@@ -34,6 +37,7 @@ class ControllerBase
     @res.body = body
     @res.content_type = content_type
     @already_rendered = true
+    @session.store_session(@req)
   end
 
   def render(template_name)

@@ -17,6 +17,7 @@ class MyController < ControllerBase
     # after you have template rendering, uncomment:
      # render :show
 
+
     # after you have sessions going, uncomment:
    session["count"] ||= 0
    session["count"] += 1

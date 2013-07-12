@@ -4,29 +4,25 @@ require 'webrick'
 class Session
   def initialize(req)
     cookies = req.cookies
-    cookies.each do |cookie|
-      p cookie.name
-      if cookie == '_rails_lite_app'
-        current_cookie = _rails_lite_app
-        p current_cookie.name
-        p current_cookie.value
-      end
-    end
-    if current_cookie
-      @current = JSON.parse(current_cookie)
-    else
+    current_cookie = cookies.find {|cookie| cookie.name == '_rails_lite_app'}
+    if current_cookie.nil?
       @current = {}
+    else
+      @current = JSON.parse(current_cookie)
     end
-    p @current
   end
 
   def [](key)
     #session[key]
+    @current[key]
   end
 
   def []=(key, val)
+    @current[key] = val
   end
 
   def store_session(res)
+    @current = @current.to_json
+    res.cookies << WEBrick::Cookie.new('_rails_lite_app', @current.to_json)
   end
 end
