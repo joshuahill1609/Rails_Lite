@@ -10,6 +10,7 @@ class ControllerBase
   def initialize(req, res)
     @req = req
     @res = res
+    @params = Params.new(req)
     # @route_params = route_params
     @already_rendered = false
 
@@ -29,7 +30,7 @@ class ControllerBase
     #needs to set the response status and header
     @res.set_redirect(WEBrick::HTTPStatus::TemporaryRedirect, url)
     @already_rendered = true
-    @session.store_session(@req)
+    session.store_session(@req)
   end
 
   def render_content(body, content_type)
@@ -37,11 +38,10 @@ class ControllerBase
     @res.body = body
     @res.content_type = content_type
     @already_rendered = true
-    @session.store_session(@req)
+    session.store_session(@req)
   end
 
   def render(template_name)
-    #template_name = show
     template_address = "views/#{self.class.name.underscore}/#{template_name}.html.erb"
     erb_template = ERB.new(File.read(template_address)).result(binding)
     render_content(erb_template, "text/html")
